@@ -38,6 +38,7 @@ class homebrew::install {
     logoutput => on_failure,
     timeout   => 0,
     require   => File[$directories],
+    user => "$homebrew::user",
   }
 
   file { '/usr/local/bin/brew':
