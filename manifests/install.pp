@@ -72,7 +72,8 @@ class homebrew::install {
     owner     => $homebrew::user,
     group     => 'admin',
     mode      => 0775,
-    link =>   "$homebrew_repository/bin/brew",
+    ensure    => link,
+    target    => "$homebrew_repository/bin/brew",
     require   => Exec['install-homebrew'],
   }
 }
