@@ -1,7 +1,16 @@
 class homebrew::install {
-  $directories = [ '/usr/local',
+  # based on: https://github.com/Homebrew/install/blob/932004ac080139249e8329eba639dce30c34d8d8/install
+  $homebrew_prefix = "/usr/local"
+  $homebrew_repository = "/usr/local/Homebrew"
+  $brew_repo = "https://github.com/Homebrew/brew"
+  $core_tap = "$homebrew_prefix/Homebrew/Library/Taps/homebrew/homebrew-core"
+  $core_tap_repo = "https://github.com/Homebrew/homebrew-core"
+
+  $directories = [ "$homebrew_repository",
                    '/usr/local/bin',
                    '/usr/local/etc',
+                   '/usr/local/Cellar',
+                   '/usr/local/Frameworks',
                    '/usr/local/include',
                    '/usr/local/lib',
                    '/usr/local/lib/pkgconfig',
@@ -32,12 +41,33 @@ class homebrew::install {
   }
 
   exec { 'install-homebrew':
-    cwd       => '/usr/local',
-    command   => "/bin/bash -o pipefail -c \"/usr/bin/curl -skSfL https://github.com/mxcl/homebrew/tarball/master | /usr/bin/tar xz -m --strip 1\"",
-    creates   => '/usr/local/bin/brew',
+    cwd       => "$homebrew_repository",
+    command   => "/bin/bash -o pipefail -c \"/usr/bin/curl -skSfL $brew_repo/tarball/master | /usr/bin/tar xz -m --strip 1\"",
+    creates   => "$homebrew_repository/bin/brew",
     logoutput => on_failure,
     timeout   => 0,
     require   => File[$directories],
+    user      => "$homebrew::user",
+  }
+
+  file { [ "$homebrew_prefix/Homebrew/Library",
+           "$homebrew_prefix/Homebrew/Library/Taps",
+           "$homebrew_prefix/Homebrew/Library/Taps/homebrew",
+           "$core_tap" ]:
+    ensure   => directory,
+    owner    => $homebrew::user,
+    group    => 'admin',
+    mode     => 0775,
+    require   => Exec['install-homebrew'],
+  }
+
+  exec { 'install-homebrew-core-tap':
+    cwd       => "$core_tap",
+    command   => "/bin/bash -o pipefail -c \"/usr/bin/curl -skSfL $core_tap_repo/tarball/master | /usr/bin/tar xz -m --strip 1\"",
+    creates   => "$core_tap/README.md",
+    logoutput => on_failure,
+    timeout   => 0,
+    require   => File["$core_tap"],
     user => "$homebrew::user",
   }
 
@@ -45,6 +75,8 @@ class homebrew::install {
     owner     => $homebrew::user,
     group     => 'admin',
     mode      => 0775,
-    require   => Exec['install-homebrew'],
+    ensure    => link,
+    target    => "$homebrew_repository/bin/brew",
+    require   => Exec['install-homebrew-core-tap'],
   }
 }
