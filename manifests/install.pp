@@ -50,7 +50,10 @@ class homebrew::install {
     user      => "$homebrew::user",
   }
 
-  file { "$core_tap":
+  file { [ "$homebrew_prefix/Homebrew/Library",
+           "$homebrew_prefix/Homebrew/Library/Taps",
+           "$homebrew_prefix/Homebrew/Library/Taps/homebrew",
+           "$core_tap" ],
     ensure   => directory,
     owner    => $homebrew::user,
     group    => 'admin',
