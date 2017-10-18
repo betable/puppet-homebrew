@@ -74,6 +74,6 @@ class homebrew::install {
     mode      => 0775,
     ensure    => link,
     target    => "$homebrew_repository/bin/brew",
-    require   => Exec['install-homebrew'],
+    require   => Exec['install-homebrew-core-tap'],
   }
 }
