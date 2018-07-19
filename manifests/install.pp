@@ -37,7 +37,7 @@ class homebrew::install {
     ensure   => directory,
     owner    => $homebrew::user,
     group    => 'admin',
-    mode     => 0775,
+    mode     => '0775',
   }
 
   exec { 'install-homebrew':
@@ -57,7 +57,7 @@ class homebrew::install {
     ensure   => directory,
     owner    => $homebrew::user,
     group    => 'admin',
-    mode     => 0775,
+    mode     => '0775',
     require   => Exec['install-homebrew'],
   }
 
@@ -74,7 +74,7 @@ class homebrew::install {
   file { '/usr/local/bin/brew':
     owner     => $homebrew::user,
     group     => 'admin',
-    mode      => 0775,
+    mode      => '0775',
     ensure    => link,
     target    => "$homebrew_repository/bin/brew",
     require   => Exec['install-homebrew-core-tap'],
