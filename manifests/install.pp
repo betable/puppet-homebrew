@@ -1,10 +1,10 @@
 class homebrew::install {
   # based on: https://github.com/Homebrew/install/blob/932004ac080139249e8329eba639dce30c34d8d8/install
-  $homebrew_prefix = "/usr/local"
-  $homebrew_repository = "/usr/local/Homebrew"
-  $brew_repo = "https://github.com/Homebrew/brew"
+  $homebrew_prefix = '/usr/local'
+  $homebrew_repository = '/usr/local/Homebrew'
+  $brew_repo = 'https://github.com/Homebrew/brew'
   $core_tap = "${homebrew_prefix}/Homebrew/Library/Taps/homebrew/homebrew-core"
-  $core_tap_repo = "https://github.com/Homebrew/homebrew-core"
+  $core_tap_repo = 'https://github.com/Homebrew/homebrew-core'
 
   $directories = [ $homebrew_repository,
                    '/usr/local/bin',

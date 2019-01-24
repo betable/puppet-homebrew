@@ -16,6 +16,6 @@ class homebrew::compiler {
     ensure   => present,
     provider => pkgdmg,
     source   => $source,
-    loglevel => "debug",
+    loglevel => 'debug',
   }
 }
