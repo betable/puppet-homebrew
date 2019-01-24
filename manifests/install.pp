@@ -6,7 +6,7 @@ class homebrew::install {
   $core_tap = "${homebrew_prefix}/Homebrew/Library/Taps/homebrew/homebrew-core"
   $core_tap_repo = "https://github.com/Homebrew/homebrew-core"
 
-  $directories = [ "${homebrew_repository}",
+  $directories = [ $homebrew_repository,
                    '/usr/local/bin',
                    '/usr/local/etc',
                    '/usr/local/Cellar',
@@ -41,19 +41,19 @@ class homebrew::install {
   }
 
   exec { 'install-homebrew':
-    cwd       => "${homebrew_repository}",
+    cwd       => $homebrew_repository,
     command   => "/bin/bash -o pipefail -c \"/usr/bin/curl -skSfL ${brew_repo}/tarball/master | /usr/bin/tar xz -m --strip 1\"",
     creates   => "${homebrew_repository}/bin/brew",
     logoutput => on_failure,
     timeout   => 0,
     require   => File[$directories],
-    user      => "${homebrew::user}",
+    user      => $homebrew::user,
   }
 
   file { [ "${homebrew_prefix}/Homebrew/Library",
            "${homebrew_prefix}/Homebrew/Library/Taps",
            "${homebrew_prefix}/Homebrew/Library/Taps/homebrew",
-           "${core_tap}" ]:
+           $core_tap ]:
     ensure   => directory,
     owner    => $homebrew::user,
     group    => 'admin',
@@ -62,13 +62,13 @@ class homebrew::install {
   }
 
   exec { 'install-homebrew-core-tap':
-    cwd       => "${core_tap}",
+    cwd       => $core_tap,
     command   => "/bin/bash -o pipefail -c \"/usr/bin/curl -skSfL ${core_tap_repo}/tarball/master | /usr/bin/tar xz -m --strip 1\"",
     creates   => "${core_tap}/README.md",
     logoutput => on_failure,
     timeout   => 0,
-    require   => File["${core_tap}"],
-    user => "${homebrew::user}",
+    require   => File[$core_tap],
+    user => $homebrew::user,
   }
 
   file { '/usr/local/bin/brew':
